@@ -1,5 +1,6 @@
 import time
 
+import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -10,10 +11,9 @@ from base.base_class import Base
 
 class Main_page(Base):
     page = 0
-    """Put ulr with your resume search area here"""
-    url = 'https://hh.ru/search/vacancy?area=1&excluded_text=senior&resume=aa712ae1ff00d95d610039ed1f503475673845' \
-          '&search_field=name&search_field=description&search_field=company_name&forceFiltersSaving=true&from' \
-          '=resumelist&page=0&hhtmFrom=resume_list '
+    url = 'https://hh.ru/search/vacancy?area=1&excluded_text=senior&professional_role=96&professional_role=124' \
+          '&professional_role=10&search_field=name&search_field=company_name&search_field=description&text=Qa' \
+          '+engineer&from=suggest_post&hhtmFrom=account_login'
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -32,7 +32,8 @@ class Main_page(Base):
     letter_text = "Добрый день! Я работал в фирме с agile системой kanban, готов к scrum спринтам. Выполнял smoke, black box, gray box и регрессионные тестирования. \
 Hard skills: Python3, Си шарп, Lua, Jira, Selenium и Postman. Примеры скриптов по автоматизации лежат в github. \
 Soft skills: Быстро и с интересом обучаюсь, предельно стрессоустойчив, в работе по качеству внимателен, въедлив, дотошен. При этом легок и приятен в общении. Умею гуглить. Английский - advanced, свободно читаю техническую документацию."
-
+    hide_button_locator = "//span[@class='vacancy-action-search-blacklist-icon']"
+    approve_hide_locator = "//a[@data-qa='vacancy__blacklist-menu-add-vacancy']"
 
    # Getters
     def get_login_button(self):
@@ -61,6 +62,12 @@ Soft skills: Быстро и с интересом обучаюсь, преде�
 
     def get_response_button(self):
         return WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, self.response_button_locator)))
+
+    def get_hide_button(self):
+        return WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, self.hide_button_locator)))
+
+    def get_approve_hide(self):
+        return WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, self.approve_hide_locator)))
 
     # Actions
     def click_login_button(self):
@@ -100,6 +107,14 @@ Soft skills: Быстро и с интересом обучаюсь, преде�
         self.get_response_button().click()
         print("Click send response button")
 
+    def click_hide_button(self):
+        self.get_hide_button().click()
+        print("Click on hide vacancy button")
+
+    def click_approve_hide(self):
+        self.get_approve_hide().click()
+        print("Click on approve hide button")
+
     # Methods
 
     def click_login(self):
@@ -112,9 +127,14 @@ Soft skills: Быстро и с интересом обучаюсь, преде�
         self.click_vacancy()
         self.click_cover_letter()
         self.input_letter()
-        self.click_response_button()
+        time.sleep(3)
+        try:
+            self.click_response_button()
+        except :
+            self.driver.back()
+            self.click_hide_button()
+            self.click_approve_hide()
+        time.sleep(3)
         self.driver.refresh()
-        print("Отправлено откликов : " + str(num))
-        time.sleep(5)
 
 
