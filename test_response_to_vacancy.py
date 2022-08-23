@@ -28,10 +28,10 @@ def test_buy_product_1():
 
     """Заполняем отклики"""
     i=0
-    while i < 50:
+    while i < 180:
         mp.accept_vacancy_on_page()
         i += 1
         print("Вы отправили откликов : " + str(i))
 
-    print("Smoke test done well!")
-    time.sleep(10)
+    print("Все отклики были отправлены успешно!")
+    time.sleep(1)
